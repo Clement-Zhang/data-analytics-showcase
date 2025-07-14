@@ -61,7 +61,6 @@ export default function Main() {
             <BarChart width={500} height={300} data={genderChart}>
                 <XAxis dataKey="name" />
                 <YAxis />
-                <Legend />
                 <Tooltip />
                 <Bar dataKey="value">
                     {genderChart.map((entry, index) => (
