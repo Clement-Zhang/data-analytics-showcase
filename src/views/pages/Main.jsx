@@ -50,8 +50,8 @@ export default function Main() {
     return (
         <>
             <Button
-                onClick={() => {
-                    reset();
+                onClick={async () => {
+                    await reset();
                     setUsers([]);
                 }}
                 position="fixed top-0 right-0"
