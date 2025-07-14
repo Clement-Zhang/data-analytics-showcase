@@ -1,17 +1,41 @@
 import Input from '../components/customs/Input';
 import DateInput from '../components/customs/DateInput';
 import Button from '../components/customs/Button';
-import { getUsers, addUser, reset } from '../../services/showcase';
-import { useEffect, useState } from 'react';
+import { getUsers, addUser, reset, getSummary } from '../../services/showcase';
+import { use, useEffect, useState } from 'react';
+import { BarChart, XAxis, YAxis, Bar, Legend, Tooltip, Cell } from 'recharts';
 import '../../assets/css/Main.css';
 
 export default function Main() {
     const [users, setUsers] = useState([]);
+    const [analytics, setAnalytics] = useState({});
+    const [genderChart, setGenderChart] = useState([]);
     const [fname, setFname] = useState('');
     const [lname, setLname] = useState('');
     const [gender, setGender] = useState('male');
     const [dob, setDob] = useState('');
     const [isoString, setIsoString] = useState('');
+    useEffect(() => {
+        setGenderChart([
+            {
+                name: 'Male',
+                value: analytics.male,
+                fill: '#3b82f6',
+            },
+            {
+                name: 'Female',
+                value: analytics.female,
+                fill: '#ef4444',
+            },
+        ]);
+    }, [analytics]);
+    useEffect(() => {
+        async function loadAnalytics() {
+            setAnalytics(await getSummary());
+        }
+        loadAnalytics();
+        console.log(analytics);
+    }, [users]);
     useEffect(() => {
         async function load() {
             setUsers(await getUsers());
@@ -34,6 +58,17 @@ export default function Main() {
             >
                 reset
             </Button>
+            <BarChart width={500} height={300} data={genderChart}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Legend />
+                <Tooltip />
+                <Bar dataKey="value">
+                    {genderChart.map((entry, index) => (
+                        <Cell key={'cell-' + index} fill={entry.fill} />
+                    ))}
+                </Bar>
+            </BarChart>
             <table>
                 <thead className="bg-blue-500">
                     <tr>

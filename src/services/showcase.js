@@ -5,6 +5,13 @@ async function getUsers() {
     return await res.json();
 }
 
+async function getSummary() {
+    const res = await fetch(process.env.REACT_APP_BACKEND + '/summarize', {
+        method: 'GET',
+    });
+    return await res.json();
+}
+
 async function addUser(user) {
     console.log('Adding user:', user);
     await fetch(process.env.REACT_APP_BACKEND + '/add', {
@@ -20,4 +27,4 @@ async function reset() {
     });
 }
 
-export { getUsers, addUser, reset };
+export { getUsers, addUser, reset, getSummary };
