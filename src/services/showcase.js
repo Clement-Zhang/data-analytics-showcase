@@ -13,7 +13,6 @@ async function getSummary() {
 }
 
 async function addUser(user) {
-    console.log('Adding user:', user);
     await fetch(process.env.REACT_APP_BACKEND + '/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

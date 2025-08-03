@@ -2,6 +2,7 @@ import Input from '../components/customs/Input';
 import DateInput from '../components/customs/DateInput';
 import Button from '../components/customs/Button';
 import { getUsers, addUser, reset, getSummary } from '../../services/showcase';
+import { date } from '../../utils/date.utils';
 import { use, useEffect, useState } from 'react';
 import { BarChart, XAxis, YAxis, Bar, Legend, Tooltip, Cell } from 'recharts';
 import '../../assets/css/Main.css';
@@ -34,7 +35,6 @@ export default function Main() {
             setAnalytics(await getSummary());
         }
         loadAnalytics();
-        console.log(analytics);
     }, [users]);
     useEffect(() => {
         async function load() {
@@ -85,7 +85,7 @@ export default function Main() {
                             <td>{user.name.first}</td>
                             <td>{user.name.last}</td>
                             <td>{user.gender}</td>
-                            <td>{user.dob}</td>
+                            <td>{date(user.dob)}</td>
                         </tr>
                     ))}
                 </tbody>
@@ -103,7 +103,6 @@ export default function Main() {
                         className="border border-gray-300"
                         value={gender}
                         onChange={(e) => {
-                            console.log(e.target.value);
                             setGender(e.target.value);
                         }}
                     >
