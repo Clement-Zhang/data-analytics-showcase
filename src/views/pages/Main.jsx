@@ -1,21 +1,25 @@
 import Input from '../components/customs/Input';
 import DateInput from '../components/customs/DateInput';
 import Button from '../components/customs/Button';
+import Header from '../components/customs/Header';
 import { getUsers, addUser, reset, getSummary } from '../../services/showcase';
 import { date } from '../../utils/date.utils';
-import { use, useEffect, useState } from 'react';
-import { BarChart, XAxis, YAxis, Bar, Legend, Tooltip, Cell } from 'recharts';
+import { useEffect, useState } from 'react';
+import Graph from '../components/customs/Graph';
 import '../../assets/css/Main.css';
 
 export default function Main() {
     const [users, setUsers] = useState([]);
     const [analytics, setAnalytics] = useState({});
     const [genderChart, setGenderChart] = useState([]);
+    const [ageGraph, setAgeGraph] = useState([]);
     const [fname, setFname] = useState('');
     const [lname, setLname] = useState('');
     const [gender, setGender] = useState('male');
     const [dob, setDob] = useState('');
     const [isoString, setIsoString] = useState('');
+    const [sortBy, setSortBy] = useState('fname');
+    const [sortAscending, setSortAscending] = useState(true);
     useEffect(() => {
         setGenderChart([
             {
@@ -28,6 +32,13 @@ export default function Main() {
                 value: analytics.female,
                 fill: '#ef4444',
             },
+        ]);
+        setAgeGraph([
+            { name: '0-14', value: analytics[0] },
+            { name: '15-24', value: analytics[15] },
+            { name: '25-54', value: analytics[25] },
+            { name: '55-64', value: analytics[55] },
+            { name: '65+', value: analytics[65] },
         ]);
     }, [analytics]);
     useEffect(() => {
@@ -47,6 +58,26 @@ export default function Main() {
             setIsoString(new Date(dob).toISOString());
         }
     }, [dob]);
+    useEffect(() => {
+        users.sort((prev, next) => {
+            if (sortBy === 'fname') {
+                return (sortAscending && prev.name.first < next.name.first) ||
+                    (!sortAscending && prev.name.first > next.name.first)
+                    ? -1
+                    : 1;
+            } else if (sortBy === 'lname') {
+                return (sortAscending && prev.name.last < next.name.last) ||
+                    (!sortAscending && prev.name.last > next.name.last)
+                    ? -1
+                    : 1;
+            } else {
+                return (sortAscending && prev[sortBy] < next[sortBy]) ||
+                    (!sortAscending && prev[sortBy] > next[sortBy])
+                    ? -1
+                    : 1;
+            }
+        });
+    }, [sortBy, sortAscending]);
     return (
         <>
             <Button
@@ -58,24 +89,52 @@ export default function Main() {
             >
                 reset
             </Button>
-            <BarChart width={500} height={300} data={genderChart}>
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="value">
-                    {genderChart.map((entry, index) => (
-                        <Cell key={'cell-' + index} fill={entry.fill} />
-                    ))}
-                </Bar>
-            </BarChart>
+            <Graph data={genderChart} defaultColour={false} />
+            <Graph data={ageGraph} />
             <table>
                 <thead className="bg-blue-500">
                     <tr>
                         <th>ID</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Gender</th>
-                        <th>DOB</th>
+                        <Header
+                            title="First Name"
+                            width="32"
+                            onSort={() => {
+                                setSortBy('fname');
+                                setSortAscending((prev) => !prev);
+                            }}
+                        />
+                        <Header
+                            title="Last Name"
+                            width="32"
+                            onSort={() => {
+                                setSortBy('lname');
+                                setSortAscending((prev) => !prev);
+                            }}
+                        />
+                        <Header
+                            title="Gender"
+                            width="32"
+                            onSort={() => {
+                                setSortBy('gender');
+                                setSortAscending((prev) => !prev);
+                            }}
+                        />
+                        <Header
+                            title="DOB"
+                            width="32"
+                            onSort={() => {
+                                setSortBy('dob');
+                                setSortAscending((prev) => !prev);
+                            }}
+                        />
+                        <Header
+                            title="Age"
+                            width="32"
+                            onSort={() => {
+                                setSortBy('age');
+                                setSortAscending((prev) => !prev);
+                            }}
+                        />
                     </tr>
                 </thead>
                 <tbody>
@@ -86,6 +145,7 @@ export default function Main() {
                             <td>{user.name.last}</td>
                             <td>{user.gender}</td>
                             <td>{date(user.dob)}</td>
+                            <td>{user.age}</td>
                         </tr>
                     ))}
                 </tbody>
