@@ -17,9 +17,9 @@ export default function Main() {
     const [lname, setLname] = useState('');
     const [gender, setGender] = useState('male');
     const [dob, setDob] = useState('');
-    const [isoString, setIsoString] = useState('');
     const [sortBy, setSortBy] = useState('fname');
     const [sortAscending, setSortAscending] = useState(true);
+    const [error, setError] = useState('');
     useEffect(() => {
         setGenderChart([
             {
@@ -53,11 +53,6 @@ export default function Main() {
         }
         load();
     }, []);
-    useEffect(() => {
-        if (dob) {
-            setIsoString(new Date(dob).toISOString());
-        }
-    }, [dob]);
     useEffect(() => {
         users.sort((prev, next) => {
             if (sortBy === 'fname') {
@@ -176,17 +171,31 @@ export default function Main() {
                 <Button
                     type="submit"
                     onClick={async (e) => {
+                        e.preventDefault();
+                        if (fname === '' || lname === '') {
+                            setError('Type in a first and/or last name');
+                            return;
+                        } else if (dob === '') {
+                            setError('Choose a date of birth');
+                            return;
+                        }
+                        setError('');
                         await addUser({
                             name: { first: fname, last: lname },
                             gender: gender,
-                            dob: isoString,
+                            dob: new Date(dob).toISOString(),
                         });
                         setUsers(await getUsers());
+                        setFname('');
+                        setLname('');
+                        setDob('');
+                        setGender('male');
                     }}
                 >
                     Add User
                 </Button>
             </form>
+            <p className={'text-red-500 ' + (error ? '' : 'hidden')}>{error}</p>
         </>
     );
 }
