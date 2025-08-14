@@ -2,51 +2,17 @@ import Header from '../components/customs/Header';
 import Graph from '../components/customs/Graph';
 import Form from '../components/customs/Form';
 import Button from '../components/customs/Button';
-import { getUsers, addUser, reset, getSummary } from '../../services/showcase';
 import { useModal } from '../../contexts/modal';
-import { date } from '../../utils/date.utils';
+import { useData } from '../../contexts/data';
+import { date } from '../../utils/date';
 import { useEffect, useState } from 'react';
 import '../../assets/css/Main.css';
 
 export default function Main() {
-    const [users, setUsers] = useState([]);
-    const [analytics, setAnalytics] = useState({});
-    const [genderChart, setGenderChart] = useState([]);
-    const [ageGraph, setAgeGraph] = useState([]);
+    const { users, add, deleteAll } = useData();
     const [sortBy, setSortBy] = useState('fname');
     const [sortAscending, setSortAscending] = useState(true);
     const { openModal, closeModal } = useModal();
-    useEffect(() => {
-        setGenderChart([
-            {
-                name: 'Male',
-                value: analytics.male,
-                fill: '#3b82f6',
-            },
-            {
-                name: 'Female',
-                value: analytics.female,
-                fill: '#ef4444',
-            },
-        ]);
-        setAgeGraph([
-            { name: '0-14', value: analytics[0] },
-            { name: '15-24', value: analytics[15] },
-            { name: '25-54', value: analytics[25] },
-            { name: '55-64', value: analytics[55] },
-            { name: '65+', value: analytics[65] },
-        ]);
-    }, [analytics]);
-    useEffect(() => {
-        (async () => {
-            setAnalytics(await getSummary());
-        })();
-    }, [users]);
-    useEffect(() => {
-        (async () => {
-            setUsers(await getUsers());
-        })();
-    }, []);
     useEffect(() => {
         users.sort((prev, next) => {
             if (sortBy === 'fname') {
@@ -71,18 +37,23 @@ export default function Main() {
         <>
             <div className="p-6 space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-white rounded-lg shadow-md p-4">
-                        <h2 className="text-lg font-semibold mb-4">
-                            Gender Distribution
-                        </h2>
-                        <Graph data={genderChart} defaultColour={false} />
-                    </div>
-                    <div className="bg-white rounded-lg shadow-md p-4">
-                        <h2 className="text-lg font-semibold mb-4">
-                            Age Groups
-                        </h2>
-                        <Graph data={ageGraph} />
-                    </div>
+                    <Graph
+                        title="Gender Distribution"
+                        bars={[
+                            { name: 'male', fill: '#3b82f6' },
+                            { name: 'female', fill: '#ef4444' },
+                        ]}
+                    />
+                    <Graph
+                        title="Age Groups"
+                        bars={[
+                            { name: '0-14', field: '0' },
+                            { name: '15-24', field: '15' },
+                            { name: '25-54', field: '25' },
+                            { name: '55-64', field: '55' },
+                            { name: '65+', field: '65' },
+                        ]}
+                    />
                 </div>
                 <div className="bg-white rounded-lg shadow-md p-4 overflow-auto">
                     <div className="flex justify-between">
@@ -136,7 +107,7 @@ export default function Main() {
                                                 },
                                             ]}
                                             submit={async (data) => {
-                                                await addUser({
+                                                await add({
                                                     name: {
                                                         first: data['fname'],
                                                         last: data['lname'],
@@ -144,8 +115,6 @@ export default function Main() {
                                                     gender: data['gender'],
                                                     dob: data['dob'],
                                                 });
-                                                setUsers(await getUsers());
-                                                setAnalytics(await getSummary());
                                                 closeModal();
                                             }}
                                         />
@@ -155,14 +124,7 @@ export default function Main() {
                             >
                                 add user
                             </Button>
-                            <Button
-                                onClick={async () => {
-                                    await reset();
-                                    setUsers([]);
-                                }}
-                            >
-                                reset
-                            </Button>
+                            <Button onClick={deleteAll}>reset</Button>
                         </div>
                     </div>
                     <table className="min-w-full table-auto border border-gray-200">

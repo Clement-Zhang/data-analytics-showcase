@@ -8,12 +8,12 @@ export const useModal = () => {
 
 export const ModalProvider = ({ children }) => {
     const [modalData, setModalData] = useState(null);
-    const openModal = (content) => {
+    function openModal(content) {
         setModalData(content);
-    };
-    const closeModal = () => {
+    }
+    function closeModal() {
         setModalData(null);
-    };
+    }
     return (
         <ModalContext.Provider value={{ openModal, closeModal }}>
             {children}
