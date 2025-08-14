@@ -1,11 +1,11 @@
-import Input from '../components/customs/Input';
-import DateInput from '../components/customs/DateInput';
-import Button from '../components/customs/Button';
 import Header from '../components/customs/Header';
+import Graph from '../components/customs/Graph';
+import Form from '../components/customs/Form';
+import Button from '../components/customs/Button';
 import { getUsers, addUser, reset, getSummary } from '../../services/showcase';
+import { useModal } from '../../contexts/modal';
 import { date } from '../../utils/date.utils';
 import { useEffect, useState } from 'react';
-import Graph from '../components/customs/Graph';
 import '../../assets/css/Main.css';
 
 export default function Main() {
@@ -13,13 +13,9 @@ export default function Main() {
     const [analytics, setAnalytics] = useState({});
     const [genderChart, setGenderChart] = useState([]);
     const [ageGraph, setAgeGraph] = useState([]);
-    const [fname, setFname] = useState('');
-    const [lname, setLname] = useState('');
-    const [gender, setGender] = useState('male');
-    const [dob, setDob] = useState('');
     const [sortBy, setSortBy] = useState('fname');
     const [sortAscending, setSortAscending] = useState(true);
-    const [error, setError] = useState('');
+    const { openModal, closeModal } = useModal();
     useEffect(() => {
         setGenderChart([
             {
@@ -42,16 +38,14 @@ export default function Main() {
         ]);
     }, [analytics]);
     useEffect(() => {
-        async function loadAnalytics() {
+        (async () => {
             setAnalytics(await getSummary());
-        }
-        loadAnalytics();
+        })();
     }, [users]);
     useEffect(() => {
-        async function load() {
+        (async () => {
             setUsers(await getUsers());
-        }
-        load();
+        })();
     }, []);
     useEffect(() => {
         users.sort((prev, next) => {
@@ -75,127 +69,174 @@ export default function Main() {
     }, [sortBy, sortAscending]);
     return (
         <>
-            <Button
-                onClick={async () => {
-                    await reset();
-                    setUsers([]);
-                }}
-                position="fixed top-0 right-0"
-            >
-                reset
-            </Button>
-            <Graph data={genderChart} defaultColour={false} />
-            <Graph data={ageGraph} />
-            <table>
-                <thead className="bg-blue-500">
-                    <tr>
-                        <th>ID</th>
-                        <Header
-                            title="First Name"
-                            width="32"
-                            onSort={() => {
-                                setSortBy('fname');
-                                setSortAscending((prev) => !prev);
-                            }}
-                        />
-                        <Header
-                            title="Last Name"
-                            width="32"
-                            onSort={() => {
-                                setSortBy('lname');
-                                setSortAscending((prev) => !prev);
-                            }}
-                        />
-                        <Header
-                            title="Gender"
-                            width="32"
-                            onSort={() => {
-                                setSortBy('gender');
-                                setSortAscending((prev) => !prev);
-                            }}
-                        />
-                        <Header
-                            title="DOB"
-                            width="32"
-                            onSort={() => {
-                                setSortBy('dob');
-                                setSortAscending((prev) => !prev);
-                            }}
-                        />
-                        <Header
-                            title="Age"
-                            width="32"
-                            onSort={() => {
-                                setSortBy('age');
-                                setSortAscending((prev) => !prev);
-                            }}
-                        />
-                    </tr>
-                </thead>
-                <tbody>
-                    {users.map((user) => (
-                        <tr key={user.id}>
-                            <td>{user.id}</td>
-                            <td>{user.name.first}</td>
-                            <td>{user.name.last}</td>
-                            <td>{user.gender}</td>
-                            <td>{date(user.dob)}</td>
-                            <td>{user.age}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-            <form>
-                <Input value={fname} onChange={setFname}>
-                    First Name
-                </Input>
-                <Input value={lname} onChange={setLname}>
-                    Last Name
-                </Input>
-                <label>
-                    Gender:
-                    <select
-                        className="border border-gray-300"
-                        value={gender}
-                        onChange={(e) => {
-                            setGender(e.target.value);
-                        }}
-                    >
-                        <option value="male">male</option>
-                        <option value="female">female</option>
-                    </select>
-                </label>
-                <DateInput value={dob} onChange={setDob} type="date">
-                    Date of Birth
-                </DateInput>
-                <Button
-                    type="submit"
-                    onClick={async (e) => {
-                        e.preventDefault();
-                        if (fname === '' || lname === '') {
-                            setError('Type in a first and/or last name');
-                            return;
-                        } else if (dob === '') {
-                            setError('Choose a date of birth');
-                            return;
-                        }
-                        setError('');
-                        await addUser({
-                            name: { first: fname, last: lname },
-                            gender: gender,
-                            dob: new Date(dob).toISOString(),
-                        });
-                        setUsers(await getUsers());
-                        setFname('');
-                        setLname('');
-                        setDob('');
-                        setGender('male');
-                    }}
-                >
-                    Add User
-                </Button>
-            </form>
-            <p className={'text-red-500 ' + (error ? '' : 'hidden')}>{error}</p>
+            <div className="p-6 space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="bg-white rounded-lg shadow-md p-4">
+                        <h2 className="text-lg font-semibold mb-4">
+                            Gender Distribution
+                        </h2>
+                        <Graph data={genderChart} defaultColour={false} />
+                    </div>
+                    <div className="bg-white rounded-lg shadow-md p-4">
+                        <h2 className="text-lg font-semibold mb-4">
+                            Age Groups
+                        </h2>
+                        <Graph data={ageGraph} />
+                    </div>
+                </div>
+                <div className="bg-white rounded-lg shadow-md p-4 overflow-auto">
+                    <div className="flex justify-between">
+                        <h2 className="text-lg font-semibold mb-4">
+                            User Details
+                        </h2>
+                        <div className="flex">
+                            <Button
+                                onClick={() =>
+                                    openModal(
+                                        <Form
+                                            dataConfig={[
+                                                {
+                                                    name: 'fname',
+                                                    placeholder: 'First Name',
+                                                },
+                                                {
+                                                    name: 'lname',
+                                                    placeholder: 'Last Name',
+                                                },
+                                                {
+                                                    name: 'gender',
+                                                    placeholder: 'Gender',
+                                                    options: ['male', 'female'],
+                                                },
+                                                {
+                                                    name: 'dob',
+                                                    type: 'date',
+                                                    placeholder:
+                                                        'Date of Birth',
+                                                },
+                                            ]}
+                                            errorConfig={[
+                                                {
+                                                    condition: (data) =>
+                                                        !data['fname'] ||
+                                                        !data['lname'],
+                                                    message:
+                                                        'Type in a first and/or last name',
+                                                },
+                                                {
+                                                    condition: (data) =>
+                                                        !data['gender'],
+                                                    message: 'Choose a gender',
+                                                },
+                                                {
+                                                    condition: (data) =>
+                                                        !data['dob'],
+                                                    message:
+                                                        'Choose a date of birth',
+                                                },
+                                            ]}
+                                            submit={async (data) => {
+                                                await addUser({
+                                                    name: {
+                                                        first: data['fname'],
+                                                        last: data['lname'],
+                                                    },
+                                                    gender: data['gender'],
+                                                    dob: data['dob'],
+                                                });
+                                                setUsers(await getUsers());
+                                                setAnalytics(await getSummary());
+                                                closeModal();
+                                            }}
+                                        />
+                                    )
+                                }
+                                width="20"
+                            >
+                                add user
+                            </Button>
+                            <Button
+                                onClick={async () => {
+                                    await reset();
+                                    setUsers([]);
+                                }}
+                            >
+                                reset
+                            </Button>
+                        </div>
+                    </div>
+                    <table className="min-w-full table-auto border border-gray-200">
+                        <thead className="bg-blue-500 text-white">
+                            <tr>
+                                <th className="px-4 py-2 text-left">ID</th>
+                                <Header
+                                    title="First Name"
+                                    width="32"
+                                    onSort={() => {
+                                        setSortBy('fname');
+                                        setSortAscending((prev) => !prev);
+                                    }}
+                                />
+                                <Header
+                                    title="Last Name"
+                                    width="32"
+                                    onSort={() => {
+                                        setSortBy('lname');
+                                        setSortAscending((prev) => !prev);
+                                    }}
+                                />
+                                <Header
+                                    title="Gender"
+                                    width="32"
+                                    onSort={() => {
+                                        setSortBy('gender');
+                                        setSortAscending((prev) => !prev);
+                                    }}
+                                />
+                                <Header
+                                    title="DOB"
+                                    width="32"
+                                    onSort={() => {
+                                        setSortBy('dob');
+                                        setSortAscending((prev) => !prev);
+                                    }}
+                                />
+                                <Header
+                                    title="Age"
+                                    width="32"
+                                    onSort={() => {
+                                        setSortBy('age');
+                                        setSortAscending((prev) => !prev);
+                                    }}
+                                />
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {users.map((user) => (
+                                <tr
+                                    key={user.id}
+                                    className="border-t border-gray-200"
+                                >
+                                    <td className="px-4 py-2">{user.id}</td>
+                                    <td className="px-4 py-2">
+                                        {user.name.first}
+                                    </td>
+                                    <td className="px-4 py-2">
+                                        {user.name.last}
+                                    </td>
+                                    <td className="px-4 py-2 capitalize">
+                                        {user.gender}
+                                    </td>
+                                    <td className="px-4 py-2">
+                                        {date(user.dob)}
+                                    </td>
+                                    <td className="px-4 py-2">{user.age}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </>
     );
 }
