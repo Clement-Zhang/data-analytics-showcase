@@ -1,3 +1,11 @@
+async function addUser(user) {
+    await fetch(process.env.REACT_APP_BACKEND + '/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(user),
+    });
+}
+
 async function getUsers() {
     const res = await fetch(process.env.REACT_APP_BACKEND + '/get', {
         method: 'GET',
@@ -12,8 +20,8 @@ async function getSummary() {
     return await res.json();
 }
 
-async function addUser(user) {
-    await fetch(process.env.REACT_APP_BACKEND + '/add', {
+async function editUser(user) {
+    await fetch(process.env.REACT_APP_BACKEND + '/edit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(user),
@@ -26,4 +34,4 @@ async function reset() {
     });
 }
 
-export { getUsers, addUser, reset, getSummary };
+export { getUsers, addUser, reset, getSummary, editUser };

@@ -7,7 +7,6 @@ export default function Graph({ title, bars }) {
     const { analytics } = useData();
     const [data, setData] = useState([]);
     useEffect(() => {
-        console.log('analytics', analytics);
         setData(
             bars.map((bar) => ({
                 name: bar.name.charAt(0).toUpperCase() + bar.name.slice(1),
