@@ -4,6 +4,7 @@ import {
     getUsers,
     getSummary,
     editUser,
+    deleteUser,
     reset,
 } from '../services/showcase';
 
@@ -27,8 +28,11 @@ export const DataProvider = ({ children }) => {
         await refresh();
     }
     async function edit(user) {
-        console.log(user);
         await editUser(user);
+        await refresh();
+    }
+    async function del(id) {
+        await deleteUser(id);
         await refresh();
     }
     async function wipe() {
@@ -69,6 +73,7 @@ export const DataProvider = ({ children }) => {
                 analytics,
                 add,
                 edit,
+                del,
                 wipe,
                 setSortBy,
                 setSortAscending,

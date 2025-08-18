@@ -28,10 +28,18 @@ async function editUser(user) {
     });
 }
 
+async function deleteUser(id) {
+    await fetch(process.env.REACT_APP_BACKEND + '/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: id,
+    });
+}
+
 async function reset() {
     await fetch(process.env.REACT_APP_BACKEND + '/wipe', {
         method: 'POST',
     });
 }
 
-export { getUsers, addUser, reset, getSummary, editUser };
+export { addUser, getUsers, getSummary, editUser, deleteUser, reset };
