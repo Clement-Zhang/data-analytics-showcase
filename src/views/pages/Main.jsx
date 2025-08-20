@@ -10,8 +10,8 @@ export default function Main() {
                 <Graph
                     title="Gender Distribution"
                     bars={[
-                        { name: 'male', fill: '#3b82f6' },
-                        { name: 'female', fill: '#ef4444' },
+                        { name: 'Male', fill: '#3b82f6' },
+                        { name: 'Female', fill: '#ef4444' },
                     ]}
                 />
                 <Graph

@@ -5,9 +5,11 @@ import Form from './customs/Form';
 import Image from './customs/Image';
 import editIcon from '../../assets/icons/edit.png';
 import remove from '../../assets/icons/remove.png';
+import { addData } from '../../configs/form/data';
+import { addError, editError } from '../../configs/form/error';
 import { useData } from '../../contexts/data';
 import { useModal } from '../../contexts/modal';
-import { date, inFuture } from '../../utils/date';
+import { date } from '../../utils/date';
 import countries from 'i18n-iso-countries';
 import enLocale from 'i18n-iso-countries/langs/en.json';
 countries.registerLocale(enLocale);
@@ -23,59 +25,8 @@ export default function ControlPanel() {
                     onClick={() =>
                         openModal(
                             <Form
-                                dataConfig={[
-                                    {
-                                        name: 'fname',
-                                        placeholder: 'First Name',
-                                    },
-                                    {
-                                        name: 'lname',
-                                        placeholder: 'Last Name',
-                                    },
-                                    {
-                                        name: 'gender',
-                                        placeholder: 'Gender',
-                                        options: ['Male', 'Female'],
-                                    },
-                                    {
-                                        name: 'country',
-                                        placeholder: 'Country',
-                                        options: Object.values(
-                                            countries.getNames('en')
-                                        ),
-                                    },
-                                    {
-                                        name: 'dob',
-                                        type: 'date',
-                                        placeholder: 'Date of Birth',
-                                    },
-                                ]}
-                                errorConfig={[
-                                    {
-                                        condition: (data) =>
-                                            !data['fname'] || !data['lname'],
-                                        message:
-                                            'Type in a first and/or last name',
-                                    },
-                                    {
-                                        condition: (data) => !data['gender'],
-                                        message: 'Choose a gender',
-                                    },
-                                    {
-                                        condition: (data) => !data['country'],
-                                        message: 'Choose a country',
-                                    },
-                                    {
-                                        condition: (data) => !data['dob'],
-                                        message: 'Choose a date of birth',
-                                    },
-                                    {
-                                        condition: (data) =>
-                                            inFuture(data['dob']),
-                                        message:
-                                            'Date of birth cannot be in the future',
-                                    },
-                                ]}
+                                dataConfig={addData}
+                                errorConfig={addError}
                                 submit={async (data) => {
                                     await add({
                                         name: {
@@ -99,10 +50,10 @@ export default function ControlPanel() {
                 </Button>
                 <Button onClick={wipe}>Reset</Button>
             </div>
-            <table className="min-w-full table-auto border border-gray-200">
+            <table className="w-full table-auto border border-gray-200">
                 <thead className="bg-blue-500 text-white">
                     <tr>
-                        <th className="px-4 py-2 text-left">ID</th>
+                        <Header title="ID" sortable={false} />
                         <Header
                             title="First Name"
                             onSort={() => {
@@ -217,27 +168,8 @@ export default function ControlPanel() {
                                                             default: user.dob,
                                                         },
                                                     ]}
-                                                    errorConfig={[
-                                                        {
-                                                            condition: (data) =>
-                                                                !data[
-                                                                    'fname'
-                                                                ] ||
-                                                                !data['lname'],
-                                                            message:
-                                                                'First and last names cannot be empty',
-                                                        },
-                                                        {
-                                                            condition: (data) =>
-                                                                inFuture(
-                                                                    data['dob']
-                                                                ),
-                                                            message:
-                                                                'Date of birth cannot be in the future',
-                                                        },
-                                                    ]}
+                                                    errorConfig={editError}
                                                     submit={async (data) => {
-                                                        console.log(data);
                                                         await edit({
                                                             id: user.id,
                                                             name: {

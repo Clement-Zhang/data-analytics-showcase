@@ -5,7 +5,7 @@ import { useState } from 'react';
 export default function Form({ dataConfig, errorConfig = [], submit }) {
     const [data, setData] = useState(
         dataConfig.reduce((acc, input) => {
-            acc[input.name] = input.default ?? '';
+            acc[input.name] = input.default || '';
             return acc;
         }, {})
     );
