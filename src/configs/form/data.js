@@ -27,3 +27,12 @@ export const addData = [
         placeholder: 'Date of Birth',
     },
 ];
+
+export function editData(user) {
+    return Array.from(addData, (item) => {
+        return {
+            ...item,
+            default: user[item.name],
+        };
+    });
+}

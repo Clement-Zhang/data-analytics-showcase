@@ -1,5 +1,6 @@
 import Input from './Input';
 import Button from './Button';
+import { useModal } from '../../../contexts/modal';
 import { useState } from 'react';
 
 export default function Form({ dataConfig, errorConfig = [], submit }) {
@@ -9,6 +10,7 @@ export default function Form({ dataConfig, errorConfig = [], submit }) {
             return acc;
         }, {})
     );
+    const { closeModal } = useModal();
     const [error, setError] = useState(null);
     return (
         <form onSubmit={submit} className="flex flex-col gap-2">
@@ -46,6 +48,7 @@ export default function Form({ dataConfig, errorConfig = [], submit }) {
                     }
                     setError(null);
                     submit(data);
+                    closeModal();
                 }}
             >
                 Submit
