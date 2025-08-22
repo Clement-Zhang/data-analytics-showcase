@@ -10,7 +10,7 @@ export default function Graph({ title, bars }) {
         setData(
             bars.map((bar) => ({
                 name: bar.name.charAt(0).toUpperCase() + bar.name.slice(1),
-                value: analytics[bar.field || bar.name],
+                value: analytics[bar.key || bar.name],
                 fill: bar.fill ?? '#b5b4b1',
             }))
         );

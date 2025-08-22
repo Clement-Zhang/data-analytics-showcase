@@ -1,4 +1,4 @@
-export default function Button({ onClick, children, width = 'w-12', type = '' }) {
+export default function Button({ onClick, children, width = 'w-12', type = 'button' }) {
     return (
         <button
             type={type}

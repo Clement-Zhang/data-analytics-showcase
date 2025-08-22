@@ -5,6 +5,7 @@ export default function Input({
     placeholder,
     children,
     type = 'text',
+    id = '',
 }) {
     return children ? (
         <select
@@ -22,6 +23,7 @@ export default function Input({
             value={value}
             type={type}
             placeholder={placeholder}
+            {...(id && { id: id })}
             onChange={(e) => onChange(e.target.value)}
             className={className}
         />

@@ -15,33 +15,34 @@ export default function Form({ dataConfig, errorConfig = [], submit }) {
     return (
         <form onSubmit={submit} className="flex flex-col gap-2">
             {dataConfig.map((input) => {
-                const { name, options, ...rest } = input;
+                const { name, options, label, ...rest } = input;
                 return (
-                    <Input
-                        key={name}
-                        value={data[name]}
-                        onChange={(value) =>
-                            setData((prev) => ({ ...prev, [name]: value }))
-                        }
-                        {...rest}
-                    >
-                        {options &&
-                            options.map((option) => (
-                                <option key={option} value={option}>
-                                    {option}
-                                </option>
-                            ))}
-                    </Input>
+                    <>
+                        {label && <label htmlFor={name}>{label}</label>}
+                        <Input
+                            key={name}
+                            value={data[name]}
+                            onChange={(value) =>
+                                setData((prev) => ({ ...prev, [name]: value }))
+                            }
+                            {...(label && { id: name })}
+                            {...rest}
+                        >
+                            {options &&
+                                options.map((option) => (
+                                    <option key={option} value={option}>
+                                        {option}
+                                    </option>
+                                ))}
+                        </Input>
+                    </>
                 );
             })}
             <Button
                 width="20"
-                type="submit"
                 onClick={(e) => {
-                    e.preventDefault();
                     for (const error of errorConfig) {
                         if (error.condition(data)) {
-                            console.log('error', error.message);
                             setError(error.message);
                             return;
                         }

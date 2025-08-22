@@ -4,23 +4,26 @@ export default function Header({
     name = '',
     width = '',
     onSort = null,
-    sortable = true,
-    visible = true,
+    tags = [],
 }) {
     return (
         <th
             className={[
                 'px-4 py-2',
                 width,
-                visible || 'w-12 border-white bg-white',
+                tags.includes('visible') || 'w-12 border-white bg-white',
             ].join(' ')}
         >
-            {visible && (
+            {tags.includes('visible') && (
                 <div
-                    className={sortable ? 'flex justify-between' : 'text-left'}
+                    className={
+                        tags.includes('sortable')
+                            ? 'flex justify-between'
+                            : 'text-left'
+                    }
                 >
                     <>{name}</>
-                    {sortable && (
+                    {tags.includes('sortable') && (
                         <img
                             src={arrows}
                             alt={'Sort by ' + name}

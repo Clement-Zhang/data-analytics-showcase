@@ -3,13 +3,14 @@ import Form from './Form';
 import Image from './Image';
 import editIcon from '../../../assets/icons/edit.png';
 import remove from '../../../assets/icons/remove.png';
+import { userObj } from '../../../utils/general';
 import { editData } from '../../../configs/form/data';
 import { editError } from '../../../configs/form/error';
 import { useData } from '../../../contexts/data';
 import { useModal } from '../../../contexts/modal';
-import { date } from '../../../utils/date';
 import countries from 'i18n-iso-countries';
 import enLocale from 'i18n-iso-countries/langs/en.json';
+import { date } from '../../../utils/date';
 countries.registerLocale(enLocale);
 
 export default function Table({ description }) {
@@ -20,15 +21,15 @@ export default function Table({ description }) {
             <thead className="bg-blue-500 text-white">
                 <tr>
                     {description.map((column) => {
-                        if (column.sortable) {
-                            column.onSort = () => {
-                                setSortBy(column.key);
+                        if (column.header.tags?.includes('sortable')) {
+                            column.header.onSort = () => {
+                                setSortBy(column.header.key);
                                 setSortAscending((prev) => !prev);
                             };
                         }
-                        return <Header {...column} />;
+                        return <Header {...column.header} />;
                     })}
-                    <Header visible={false} width="w-18" />
+                    <Header width="w-18" />
                 </tr>
             </thead>
             <tbody>
@@ -38,26 +39,15 @@ export default function Table({ description }) {
                         className="group border-t border-gray-200"
                     >
                         {description.map((column) => {
-                            switch (column.key) {
-                                case 'country':
-                                    return (
-                                        <td className="px-4 py-2">
-                                            {user.country}
-                                        </td>
-                                    );
-                                case 'dob':
-                                    return (
-                                        <td className="px-4 py-2">
-                                            {date(user.dob)}
-                                        </td>
-                                    );
-                                default:
-                                    return (
-                                        <td className="px-4 py-2">
-                                            {user[column.key]}
-                                        </td>
-                                    );
-                            }
+                            return (
+                                <td className="px-4 py-2">
+                                    {column.tags?.includes('special processing')
+                                        ? column.process(
+                                              user[column.header.key]
+                                          )
+                                        : user[column.header.key]}
+                                </td>
+                            );
                         })}
                         <td className="border-white bg-white relative align-middle">
                             <div className="opacity-0 group-hover:opacity-100">
@@ -65,27 +55,28 @@ export default function Table({ description }) {
                                     src={editIcon}
                                     alt="Edit User"
                                     interactions="absolute right-1 -translate-y-1/2"
-                                    onClick={() =>
+                                    onClick={() => {
                                         openModal(
                                             <Form
-                                                dataConfig={editData(user)}
+                                                dataConfig={editData({
+                                                    ...user,
+                                                    ...{
+                                                        dob: date(
+                                                            user.dob,
+                                                            'YYYY-MM-DD'
+                                                        ),
+                                                    },
+                                                })}
                                                 errorConfig={editError}
                                                 submit={async (data) => {
                                                     await edit({
                                                         id: user.id,
-                                                        fname: data['fname'],
-                                                        lname: data['lname'],
-                                                        gender: data['gender'],
-                                                        country:
-                                                            data['country'],
-                                                        dob: new Date(
-                                                            data['dob']
-                                                        ).toISOString(),
+                                                        ...userObj(data),
                                                     });
                                                 }}
                                             />
-                                        )
-                                    }
+                                        );
+                                    }}
                                 />
                                 <Image
                                     src={remove}

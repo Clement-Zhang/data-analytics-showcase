@@ -45,26 +45,12 @@ export const DataProvider = ({ children }) => {
         })();
     }, []);
     useEffect(() => {
-        users.sort((prev, next) => {
-            switch (sortBy) {
-                case 'fname':
-                    return (sortAscending &&
-                        prev.name.first < next.name.first) ||
-                        (!sortAscending && prev.name.first > next.name.first)
-                        ? -1
-                        : 1;
-                case 'lname':
-                    return (sortAscending && prev.name.last < next.name.last) ||
-                        (!sortAscending && prev.name.last > next.name.last)
-                        ? -1
-                        : 1;
-                default:
-                    return (sortAscending && prev[sortBy] < next[sortBy]) ||
-                        (!sortAscending && prev[sortBy] > next[sortBy])
-                        ? -1
-                        : 1;
-            }
-        });
+        users.sort((prev, next) =>
+            (sortAscending && prev[sortBy] < next[sortBy]) ||
+            (!sortAscending && prev[sortBy] > next[sortBy])
+                ? -1
+                : 1
+        );
     }, [sortBy, sortAscending]);
     return (
         <DataContext.Provider

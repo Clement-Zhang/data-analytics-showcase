@@ -24,7 +24,7 @@ export const addData = [
     {
         name: 'dob',
         type: 'date',
-        placeholder: 'Date of Birth',
+        label: 'Date of Birth:',
     },
 ];
 
