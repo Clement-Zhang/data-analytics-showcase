@@ -11,18 +11,22 @@ export const setUsers = createAsyncThunk('users/set', async () => {
     return await getUsers();
 });
 
+export function selectUsers(state) {
+    return state.users.users;
+}
+
 export const add = createAsyncThunk('users/add', async (user, thunkAPI) => {
-    const { dispatch } = thunkAPI;
+    const { getState } = thunkAPI;
     await addUser(user);
-    dispatch(setUsers());
+    getState().users.update = true;
 });
 
 export const edit = createAsyncThunk(
     'users/edit',
     async (user, thunkAPI) => {
-        const { dispatch } = thunkAPI;
+        const { getState } = thunkAPI;
         await editUser(user);
-        dispatch(setUsers());
+        getState().users.update = true;
     }
 );
 
@@ -40,16 +44,16 @@ export const sort = createAsyncThunk('users/sort', async (_, thunkAPI) => {
 export const del = createAsyncThunk(
     'users/delete',
     async (id, thunkAPI) => {
-        const { dispatch } = thunkAPI;
+        const { getState } = thunkAPI;
         await deleteUser(id);
-        dispatch(setUsers());
+        getState().users.update = true;
     }
 );
 
 export const wipe = createAsyncThunk('users/reset', async (_, thunkAPI) => {
-    const { dispatch } = thunkAPI;
+    const { getState } = thunkAPI;
     await reset();
-    dispatch(setUsers());
+    getState().users.update = true;
 });
 
 const usersSlice = createSlice({
@@ -57,6 +61,7 @@ const usersSlice = createSlice({
     initialState: {
         users: [],
         changed: false,
+        update: false,
     },
     reducers: {},
     extraReducers: (builder) => {

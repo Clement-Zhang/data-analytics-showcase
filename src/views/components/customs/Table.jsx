@@ -7,13 +7,15 @@ import { userObj } from '../../../utils/general';
 import { editData } from '../../../configs/form/data';
 import { editError } from '../../../configs/form/error';
 import { useData } from '../../../contexts/data';
-import { useModal } from '../../../contexts/modal';
+import { useModal } from '../../../globals/modal';
+import { useDispatch, useSelector } from 'react-redux';
 import countries from 'i18n-iso-countries';
 import enLocale from 'i18n-iso-countries/langs/en.json';
 import { date } from '../../../utils/date';
 countries.registerLocale(enLocale);
 
 export default function Table({ description }) {
+    const { dispatch } = useDispatch();
     const { users, edit, del, setSortBy, setSortAscending } = useData();
     const { openModal, closeModal } = useModal();
     return (
