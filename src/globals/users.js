@@ -7,7 +7,9 @@ import {
     reset,
 } from '../services/showcase';
 
-export const setUsers = createAsyncThunk('users/set', async () => {
+export const setUsers = createAsyncThunk('users/set', async (_, thunkAPI) => {
+    const { dispatch } = thunkAPI;
+    dispatch(setFlag({ flag: 'update', value: false }));
     return await getUsers();
 });
 
@@ -16,19 +18,16 @@ export function selectUsers(state) {
 }
 
 export const add = createAsyncThunk('users/add', async (user, thunkAPI) => {
-    const { getState } = thunkAPI;
+    const { dispatch } = thunkAPI;
     await addUser(user);
-    getState().users.update = true;
+    dispatch(setFlag({ flag: 'update', value: true }));
 });
 
-export const edit = createAsyncThunk(
-    'users/edit',
-    async (user, thunkAPI) => {
-        const { getState } = thunkAPI;
-        await editUser(user);
-        getState().users.update = true;
-    }
-);
+export const edit = createAsyncThunk('users/edit', async (user, thunkAPI) => {
+    const { dispatch } = thunkAPI;
+    await editUser(user);
+    dispatch(setFlag({ flag: 'update', value: true }));
+});
 
 export const sort = createAsyncThunk('users/sort', async (_, thunkAPI) => {
     const { getState } = thunkAPI;
@@ -41,19 +40,16 @@ export const sort = createAsyncThunk('users/sort', async (_, thunkAPI) => {
     );
 });
 
-export const del = createAsyncThunk(
-    'users/delete',
-    async (id, thunkAPI) => {
-        const { getState } = thunkAPI;
-        await deleteUser(id);
-        getState().users.update = true;
-    }
-);
+export const del = createAsyncThunk('users/delete', async (id, thunkAPI) => {
+    const { dispatch } = thunkAPI;
+    await deleteUser(id);
+    dispatch(setFlag({ flag: 'update', value: true }));
+});
 
 export const wipe = createAsyncThunk('users/reset', async (_, thunkAPI) => {
-    const { getState } = thunkAPI;
+    const { dispatch } = thunkAPI;
     await reset();
-    getState().users.update = true;
+    dispatch(setFlag({ flag: 'update', value: true }));
 });
 
 const usersSlice = createSlice({
@@ -63,7 +59,11 @@ const usersSlice = createSlice({
         changed: false,
         update: false,
     },
-    reducers: {},
+    reducers: {
+        setFlag: (state, action) => {
+            state[action.payload.flag] = action.payload.value;
+        },
+    },
     extraReducers: (builder) => {
         builder
             .addCase(setUsers.fulfilled, (state, action) => {
@@ -76,6 +76,8 @@ const usersSlice = createSlice({
             });
     },
 });
+
+export const { setFlag } = usersSlice.actions;
 
 export default usersSlice.reducer;
 
