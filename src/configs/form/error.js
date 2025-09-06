@@ -3,6 +3,13 @@ import countries from 'i18n-iso-countries';
 import enLocale from 'i18n-iso-countries/langs/en.json';
 countries.registerLocale(enLocale);
 
+/*
+    structure: ordered list of possible errors
+    each possible error has a "condition" function that decides if there is an error
+    if there is an error, the corresponding "message" will be displayed
+    to save screen space, only the first encountered error will be displayed
+*/
+
 export const addError = [
     {
         condition: (data) => !data['fname'] || !data['lname'],

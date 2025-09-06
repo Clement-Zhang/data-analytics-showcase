@@ -6,7 +6,8 @@ import remove from '../../../assets/icons/remove.png';
 import { userObj } from '../../../utils/general';
 import { editData } from '../../../configs/form/data';
 import { editError } from '../../../configs/form/error';
-import { useData } from '../../../contexts/data';
+import { selectUsers, edit, del } from '../../../globals/users';
+import { setSort } from '../../../globals/organize';
 import { useModal } from '../../../globals/modal';
 import { useDispatch, useSelector } from 'react-redux';
 import countries from 'i18n-iso-countries';
@@ -16,7 +17,7 @@ countries.registerLocale(enLocale);
 
 export default function Table({ description }) {
     const { dispatch } = useDispatch();
-    const { users, edit, del, setSortBy, setSortAscending } = useData();
+    const users = useSelector(selectUsers);
     const { openModal, closeModal } = useModal();
     return (
         <table className="w-full table-fixed border border-gray-200">
@@ -25,8 +26,7 @@ export default function Table({ description }) {
                     {description.map((column) => {
                         if (column.header.tags?.includes('sortable')) {
                             column.header.onSort = () => {
-                                setSortBy(column.header.key);
-                                setSortAscending((prev) => !prev);
+                                dispatch(setSort(column.header.key));
                             };
                         }
                         return <Header {...column.header} />;
@@ -70,12 +70,14 @@ export default function Table({ description }) {
                                                     },
                                                 })}
                                                 errorConfig={editError}
-                                                submit={async (data) => {
-                                                    await edit({
-                                                        id: user.id,
-                                                        ...userObj(data),
-                                                    });
-                                                }}
+                                                submit={(data) =>
+                                                    dispatch(
+                                                        edit({
+                                                            id: user.id,
+                                                            ...userObj(data),
+                                                        })
+                                                    )
+                                                }
                                             />
                                         );
                                     }}
@@ -84,8 +86,8 @@ export default function Table({ description }) {
                                     src={remove}
                                     alt="Remove User"
                                     interactions="absolute right-6 -translate-y-1/2"
-                                    onClick={async () => {
-                                        await del(user.id);
+                                    onClick={() => {
+                                        dispatch(del(user.id));
                                         closeModal();
                                     }}
                                 />

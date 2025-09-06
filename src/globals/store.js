@@ -16,11 +16,12 @@ const store = configureStore({
 });
 
 store.subscribe(() => {
+    console.log("in")
     if (store.getState().organize.changed) {
-        store.dispatch(sort(store.getState().organize));
+        store.dispatch(sort(store.getState().organize.sort));
         store.dispatch(setSorted());
     } else if (store.getState().users.changed) {
-        store.dispatch(sort(store.getState().organize));
+        store.dispatch(sort(store.getState().organize.sort));
         store.dispatch(setAnalytics());
     }
     if (store.getState().users.update) {
@@ -28,8 +29,7 @@ store.subscribe(() => {
     }
 });
 
-store.dispatch(setUsers());
-
-export default function Data({ children }) {
+export default function DataProvider({ children }) {
+    store.dispatch(setUsers());
     return <Provider store={store}>{children}</Provider>;
 }

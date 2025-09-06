@@ -8,7 +8,8 @@ const organizeSlice = createSlice({
     },
     reducers: {
         setSort: (state, action) => {
-            state.sort = action.payload;
+            state.sort.sortBy = action.payload;
+            state.sort.sortAscending = !state.sort.sortAscending;
             state.changed = true;
         },
         setSorted: (state) => {

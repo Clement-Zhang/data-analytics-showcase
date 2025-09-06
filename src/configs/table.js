@@ -1,5 +1,12 @@
 import { date } from '../utils/date';
-
+/*
+    structure: ordered list of header objects
+    each header object contains a "header" field for the Header component
+    usage of "header" field is shown in Header component
+    optional fields:
+    - tags: list describing extra steps that should be taken before the data is displayed
+            this list is necessary because a blanket assumption of extra steps will bug
+*/
 export const controlPanel = [
     { header: { name: 'ID', key: 'id', width: 'w-64', tags: ['visible'] } },
     {

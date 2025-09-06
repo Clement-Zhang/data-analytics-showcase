@@ -5,6 +5,10 @@ export const setAnalytics = createAsyncThunk('analytics/set', async () => {
     return await getSummary();
 });
 
+export function selectAnalytics(state) {
+    return state.analytics;
+}
+
 const analyticsSlice = createSlice({
     name: 'analytics',
     initialState: {},

@@ -22,7 +22,7 @@ export default function ControlPanel() {
                             <Form
                                 dataConfig={addData}
                                 errorConfig={addError}
-                                submit={(data) => dispatch(add(data))}
+                                submit={(data) => dispatch(add(userObj(data)))}
                             />
                         )
                     }
