@@ -11,7 +11,8 @@ const store = configureStore({
     },
 });
 
-store.dispatch(setUsers());
+await store.dispatch(setUsers());
+console.log(store.getState());
 
 export default function DataProvider({ children }) {
     return <Provider store={store}>{children}</Provider>;

@@ -11,7 +11,6 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 export const setUsers = createAsyncThunk('users/set', async (_, thunkAPI) => {
     const { dispatch, getState } = thunkAPI;
     dispatch(setAnalytics());
-    console.log(getState())
     return await getUsers();
 });
 
@@ -31,16 +30,6 @@ export const edit = createAsyncThunk('users/edit', async (user, thunkAPI) => {
     dispatch(setUsers());
 });
 
-export const sort = createAsyncThunk('users/sort', async (spec, thunkAPI) => {
-    const { getState } = thunkAPI;
-    return getState().users.toSorted((prev, next) =>
-        (spec.sortAscending && prev[spec.sortBy] < next[spec.sortBy]) ||
-        (!spec.sortAscending && prev[spec.sortBy] > next[spec.sortBy])
-            ? -1
-            : 1
-    );
-});
-
 export const del = createAsyncThunk('users/delete', async (id, thunkAPI) => {
     const { dispatch } = thunkAPI;
     await deleteUser(id);
@@ -56,14 +45,28 @@ export const wipe = createAsyncThunk('users/reset', async (_, thunkAPI) => {
 const usersSlice = createSlice({
     name: 'users',
     initialState: [],
-    reducers: {},
+    reducers: {
+        sort: (state, action) => {
+            const { sortBy, sortAscending } = action.payload;
+            state.sort((prev, next) =>
+                sortAscending
+                    ? prev[sortBy] > next[sortBy]
+                        ? 1
+                        : -1
+                    : prev[sortBy] < next[sortBy]
+                    ? 1
+                    : -1
+            );
+        },
+    },
     extraReducers: (builder) => {
         builder.addCase(setUsers.fulfilled, (state, action) => {
-            state = action.payload;
+            state.length = 0;
+            state.push(...action.payload);
         });
     },
 });
 
-export const { setFlag } = usersSlice.actions;
+export const { sort } = usersSlice.actions;
 
 export default usersSlice.reducer;

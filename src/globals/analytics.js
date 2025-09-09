@@ -15,7 +15,8 @@ const analyticsSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder.addCase(setAnalytics.fulfilled, (state, action) => {
-            state.analytics = action.payload;
+            state.length = 0;
+            state.push(...action.payload);
         });
     },
 });
