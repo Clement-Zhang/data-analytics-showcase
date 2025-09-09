@@ -6,10 +6,10 @@ import remove from '../../../assets/icons/remove.png';
 import { userObj } from '../../../utils/general';
 import { editData } from '../../../configs/form/data';
 import { editError } from '../../../configs/form/error';
-import { selectUsers, edit, del } from '../../../globals/users';
-import { setSort } from '../../../globals/organize';
+import { selectUsers, edit, del, sort } from '../../../globals/users';
 import { useModal } from '../../../globals/modal';
 import { useDispatch, useSelector } from 'react-redux';
+import { useState } from 'react';
 import countries from 'i18n-iso-countries';
 import enLocale from 'i18n-iso-countries/langs/en.json';
 import { date } from '../../../utils/date';
@@ -18,6 +18,8 @@ countries.registerLocale(enLocale);
 export default function Table({ description }) {
     const { dispatch } = useDispatch();
     const users = useSelector(selectUsers);
+    const [sortBy, setSortBy] = useState('fname');
+    const [sortAscending, setSortAscending] = useState(true);
     const { openModal, closeModal } = useModal();
     return (
         <table className="w-full table-fixed border border-gray-200">
@@ -26,7 +28,9 @@ export default function Table({ description }) {
                     {description.map((column) => {
                         if (column.header.tags?.includes('sortable')) {
                             column.header.onSort = () => {
-                                dispatch(setSort(column.header.key));
+                                setSortBy(column.header.key);
+                                setSortAscending((prev) => !prev);
+                                dispatch(sort({ sortBy, sortAscending }));
                             };
                         }
                         return <Header {...column.header} />;
