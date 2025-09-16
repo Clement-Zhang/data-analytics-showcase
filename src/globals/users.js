@@ -47,13 +47,13 @@ const usersSlice = createSlice({
     initialState: [],
     reducers: {
         sort: (state, action) => {
-            const { sortBy, sortAscending } = action.payload;
+            const { by, ascending } = action.payload;
             state.sort((prev, next) =>
-                sortAscending
-                    ? prev[sortBy] > next[sortBy]
+                ascending
+                    ? prev[by] > next[by]
                         ? 1
                         : -1
-                    : prev[sortBy] < next[sortBy]
+                    : prev[by] < next[by]
                     ? 1
                     : -1
             );
