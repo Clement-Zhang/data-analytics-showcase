@@ -6,11 +6,12 @@ import { userObj } from '../../utils/general';
 import { addData } from '../../configs/form/data';
 import { addError } from '../../configs/form/error';
 import { controlPanel } from '../../configs/table';
-import { useData } from '../../contexts/data';
-import { useModal } from '../../contexts/modal';
+import { useModal } from '../../globals/modal';
+import { add, wipe } from '../../globals/users';
+import { useDispatch } from 'react-redux';
 
 export default function ControlPanel() {
-    const { add, wipe } = useData();
+    const dispatch = useDispatch();
     const { openModal } = useModal();
     return (
         <Card title="User Details" styling="overflow-auto">
@@ -21,11 +22,7 @@ export default function ControlPanel() {
                             <Form
                                 dataConfig={addData}
                                 errorConfig={addError}
-                                submit={async (data) => {
-                                    await add({
-                                        ...userObj(data),
-                                    });
-                                }}
+                                submit={(data) => dispatch(add(userObj(data)))}
                             />
                         )
                     }
@@ -33,7 +30,7 @@ export default function ControlPanel() {
                 >
                     Add User
                 </Button>
-                <Button onClick={wipe}>Reset</Button>
+                <Button onClick={() => dispatch(wipe())}>Reset</Button>
             </div>
             <Table description={controlPanel} />
         </Card>

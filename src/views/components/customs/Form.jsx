@@ -1,6 +1,6 @@
 import Input from './Input';
 import Button from './Button';
-import { useModal } from '../../../contexts/modal';
+import { useModal } from '../../../globals/modal';
 import { useState } from 'react';
 
 export default function Form({ dataConfig, errorConfig = [], submit }) {

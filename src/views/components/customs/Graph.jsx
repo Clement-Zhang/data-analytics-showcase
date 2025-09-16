@@ -1,10 +1,11 @@
 import Card from '../Card';
-import { useData } from '../../../contexts/data';
+import { selectAnalytics } from '../../../globals/analytics';
 import { BarChart, XAxis, YAxis, Bar, Tooltip, Cell } from 'recharts';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 export default function Graph({ title, bars }) {
-    const { analytics } = useData();
+    const analytics = useSelector(selectAnalytics);
     const [data, setData] = useState([]);
     useEffect(() => {
         setData(

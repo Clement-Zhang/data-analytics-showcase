@@ -6,15 +6,19 @@ import remove from '../../../assets/icons/remove.png';
 import { userObj } from '../../../utils/general';
 import { editData } from '../../../configs/form/data';
 import { editError } from '../../../configs/form/error';
-import { useData } from '../../../contexts/data';
-import { useModal } from '../../../contexts/modal';
+import { selectUsers, edit, del, sort } from '../../../globals/users';
+import { useModal } from '../../../globals/modal';
+import { useDispatch, useSelector } from 'react-redux';
+import { useState } from 'react';
 import countries from 'i18n-iso-countries';
 import enLocale from 'i18n-iso-countries/langs/en.json';
 import { date } from '../../../utils/date';
 countries.registerLocale(enLocale);
 
 export default function Table({ description }) {
-    const { users, edit, del, setSortBy, setSortAscending } = useData();
+    const { dispatch } = useDispatch();
+    const users = useSelector(selectUsers);
+    const [sort, setSort] = useState({ by: 'fname', ascending: true });
     const { openModal, closeModal } = useModal();
     return (
         <table className="w-full table-fixed border border-gray-200">
@@ -23,8 +27,12 @@ export default function Table({ description }) {
                     {description.map((column) => {
                         if (column.header.tags?.includes('sortable')) {
                             column.header.onSort = () => {
-                                setSortBy(column.header.key);
-                                setSortAscending((prev) => !prev);
+                                setSort((prev) => ({
+                                    ...prev,
+                                    by: column.header.key,
+                                    ascending: !prev.ascending,
+                                }));
+                                dispatch(sort(sort));
                             };
                         }
                         return <Header {...column.header} />;
@@ -68,12 +76,14 @@ export default function Table({ description }) {
                                                     },
                                                 })}
                                                 errorConfig={editError}
-                                                submit={async (data) => {
-                                                    await edit({
-                                                        id: user.id,
-                                                        ...userObj(data),
-                                                    });
-                                                }}
+                                                submit={(data) =>
+                                                    dispatch(
+                                                        edit({
+                                                            id: user.id,
+                                                            ...userObj(data),
+                                                        })
+                                                    )
+                                                }
                                             />
                                         );
                                     }}
@@ -82,8 +92,8 @@ export default function Table({ description }) {
                                     src={remove}
                                     alt="Remove User"
                                     interactions="absolute right-6 -translate-y-1/2"
-                                    onClick={async () => {
-                                        await del(user.id);
+                                    onClick={() => {
+                                        dispatch(del(user.id));
                                         closeModal();
                                     }}
                                 />
