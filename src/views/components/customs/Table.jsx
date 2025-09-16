@@ -16,9 +16,9 @@ import { date } from '../../../utils/date';
 countries.registerLocale(enLocale);
 
 export default function Table({ description }) {
-    const { dispatch } = useDispatch();
+    const dispatch = useDispatch();
     const users = useSelector(selectUsers);
-    const [sort, setSort] = useState({ by: 'fname', ascending: true });
+    const [sortSpec, setSortSpec] = useState({ by: 'fname', ascending: true });
     const { openModal, closeModal } = useModal();
     return (
         <table className="w-full table-fixed border border-gray-200">
@@ -27,12 +27,12 @@ export default function Table({ description }) {
                     {description.map((column) => {
                         if (column.header.tags?.includes('sortable')) {
                             column.header.onSort = () => {
-                                setSort((prev) => ({
+                                setSortSpec((prev) => ({
                                     ...prev,
                                     by: column.header.key,
                                     ascending: !prev.ascending,
                                 }));
-                                dispatch(sort(sort));
+                                dispatch(sort(sortSpec));
                             };
                         }
                         return <Header {...column.header} />;
