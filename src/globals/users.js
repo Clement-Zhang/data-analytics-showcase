@@ -9,7 +9,7 @@ import { setAnalytics } from './analytics';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 export const setUsers = createAsyncThunk('users/set', async (_, thunkAPI) => {
-    const { dispatch, getState } = thunkAPI;
+    const { dispatch } = thunkAPI;
     dispatch(setAnalytics());
     return await getUsers();
 });
@@ -60,10 +60,7 @@ const usersSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(setUsers.fulfilled, (state, action) => {
-            state.length = 0;
-            state.push(...action.payload);
-        });
+        builder.addCase(setUsers.fulfilled, (_, action) => action.payload);
     },
 });
 

@@ -18,8 +18,7 @@ countries.registerLocale(enLocale);
 export default function Table({ description }) {
     const { dispatch } = useDispatch();
     const users = useSelector(selectUsers);
-    const [sortBy, setSortBy] = useState('fname');
-    const [sortAscending, setSortAscending] = useState(true);
+    const [sort, setSort] = useState({ by: 'fname', ascending: true });
     const { openModal, closeModal } = useModal();
     return (
         <table className="w-full table-fixed border border-gray-200">
@@ -28,9 +27,12 @@ export default function Table({ description }) {
                     {description.map((column) => {
                         if (column.header.tags?.includes('sortable')) {
                             column.header.onSort = () => {
-                                setSortBy(column.header.key);
-                                setSortAscending((prev) => !prev);
-                                dispatch(sort({ sortBy, sortAscending }));
+                                setSort((prev) => ({
+                                    ...prev,
+                                    by: column.header.key,
+                                    ascending: !prev.ascending,
+                                }));
+                                dispatch(sort(sort));
                             };
                         }
                         return <Header {...column.header} />;

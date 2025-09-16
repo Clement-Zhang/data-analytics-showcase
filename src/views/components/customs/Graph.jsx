@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 export default function Graph({ title, bars }) {
-    const { analytics } = useSelector(selectAnalytics);
+    const analytics = useSelector(selectAnalytics);
     const [data, setData] = useState([]);
     useEffect(() => {
         setData(
