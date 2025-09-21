@@ -3,7 +3,7 @@ export default function Card({ title, children, styling = '' }) {
         <div
             className={'relative bg-white rounded-lg shadow-md p-4 ' + styling}
         >
-            {title && <h2 className="text-lg font-semibold mb-4">{title}</h2>}
+            {title && <h1 className="text-lg font-semibold mb-4">{title}</h1>}
             {children}
         </div>
     );
