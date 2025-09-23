@@ -13,7 +13,7 @@ export default function Form({ dataConfig, errorConfig = [], submit }) {
     const { closeModal } = useModal();
     const [error, setError] = useState(null);
     return (
-        <form onSubmit={submit} className="flex flex-col gap-2">
+        <form className="flex flex-col gap-2">
             {dataConfig.map((input) => {
                 const { name, options, label, ...rest } = input;
                 return (
