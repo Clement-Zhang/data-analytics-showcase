@@ -40,7 +40,7 @@ export default function Form({ dataConfig, errorConfig = [], submit }) {
             })}
             <Button
                 width="20"
-                onClick={(e) => {
+                onClick={() => {
                     for (const error of errorConfig) {
                         if (error.condition(data)) {
                             setError(error.message);
