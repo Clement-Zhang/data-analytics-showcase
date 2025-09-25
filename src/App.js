@@ -1,5 +1,5 @@
 import './assets/css/App.css';
-import Main from './views/pages/Main';
+import Main from './views/pages/Main.page';
 import { ModalProvider } from './globals/modal';
 import DataProvider from './globals/store';
 
