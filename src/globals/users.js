@@ -59,9 +59,8 @@ const usersSlice = createSlice({
             );
         },
     },
-    extraReducers: (builder) => {
-        builder.addCase(setUsers.fulfilled, (_, action) => action.payload);
-    },
+    extraReducers: (builder) =>
+        builder.addCase(setUsers.fulfilled, (_, action) => action.payload),
 });
 
 export const { sort } = usersSlice.actions;
