@@ -1,7 +1,7 @@
 import ControlPanel from '../components/ControlPanel';
 import Graph from '../components/customs/Graph';
 import Grid from '../components/Grid';
-import { gender, age } from '../../configs/graph';
+import { gender, age } from '../../configs/graph.config';
 import '../../assets/css/Main.css';
 
 export default function Main() {
