@@ -1,27 +1,36 @@
+const route = (url) => process.env.REACT_APP_BACKEND + url;
+
 export async function addUser(user) {
-    await fetch(process.env.REACT_APP_BACKEND + '/add', {
+    await fetch(route('/add'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(user),
     });
 }
 
+export async function getData() {
+    const res = await fetch(route('/data'), {
+        method: 'GET',
+    });
+    return await res.json();
+}
+
 export async function getUsers() {
-    const res = await fetch(process.env.REACT_APP_BACKEND + '/get', {
+    const res = await fetch(route('/get'), {
         method: 'GET',
     });
     return await res.json();
 }
 
 export async function getSummary() {
-    const res = await fetch(process.env.REACT_APP_BACKEND + '/summarize', {
+    const res = await fetch(route('/summarize'), {
         method: 'GET',
     });
     return await res.json();
 }
 
 export async function editUser(user) {
-    await fetch(process.env.REACT_APP_BACKEND + '/edit', {
+    await fetch(route('/edit'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(user),
@@ -29,7 +38,7 @@ export async function editUser(user) {
 }
 
 export async function deleteUser(id) {
-    await fetch(process.env.REACT_APP_BACKEND + '/delete', {
+    await fetch(route('/delete'), {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: id,
@@ -37,7 +46,7 @@ export async function deleteUser(id) {
 }
 
 export async function reset() {
-    await fetch(process.env.REACT_APP_BACKEND + '/wipe', {
+    await fetch(route('/wipe'), {
         method: 'POST',
     });
 }

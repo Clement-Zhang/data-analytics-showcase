@@ -1,51 +1,37 @@
 import {
     addUser,
-    getUsers,
     editUser,
     deleteUser,
     reset,
-} from '../services/showcase';
-import { setAnalytics } from './analytics';
+} from '../services/showcase.service';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-
-export const setUsers = createAsyncThunk('users/set', async (_, thunkAPI) => {
-    const { dispatch } = thunkAPI;
-    dispatch(setAnalytics());
-    return await getUsers();
-});
 
 export function selectUsers(state) {
     return state.users;
 }
 
-export const add = createAsyncThunk('users/add', async (user, thunkAPI) => {
-    const { dispatch } = thunkAPI;
-    await addUser(user);
-    dispatch(setUsers());
-});
+export const add = createAsyncThunk(
+    'users/add',
+    async (user) => await addUser(user),
+);
 
-export const edit = createAsyncThunk('users/edit', async (user, thunkAPI) => {
-    const { dispatch } = thunkAPI;
-    await editUser(user);
-    dispatch(setUsers());
-});
+export const edit = createAsyncThunk(
+    'users/edit',
+    async (user) => await editUser(user),
+);
 
-export const del = createAsyncThunk('users/delete', async (id, thunkAPI) => {
-    const { dispatch } = thunkAPI;
-    await deleteUser(id);
-    dispatch(setUsers());
-});
+export const del = createAsyncThunk(
+    'users/delete',
+    async (id) => await deleteUser(id),
+);
 
-export const wipe = createAsyncThunk('users/reset', async (_, thunkAPI) => {
-    const { dispatch } = thunkAPI;
-    await reset();
-    dispatch(setUsers());
-});
+export const wipe = createAsyncThunk('users/reset', async () => await reset());
 
 const usersSlice = createSlice({
     name: 'users',
     initialState: [],
     reducers: {
+        setUsers: (_, action) => action.payload,
         sort: (state, action) => {
             const { by, ascending } = action.payload;
             state.sort((prev, next) =>
@@ -54,15 +40,13 @@ const usersSlice = createSlice({
                         ? 1
                         : -1
                     : prev[by] < next[by]
-                    ? 1
-                    : -1
+                      ? 1
+                      : -1,
             );
         },
     },
-    extraReducers: (builder) =>
-        builder.addCase(setUsers.fulfilled, (_, action) => action.payload),
 });
 
-export const { sort } = usersSlice.actions;
+export const { sort, setUsers } = usersSlice.actions;
 
 export default usersSlice.reducer;

@@ -1,9 +1,4 @@
-import { getSummary } from '../services/showcase';
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-
-export const setAnalytics = createAsyncThunk('analytics/set', async () => {
-    return await getSummary();
-});
+import { createSlice } from '@reduxjs/toolkit';
 
 export function selectAnalytics(state) {
     return state.analytics;
@@ -12,9 +7,11 @@ export function selectAnalytics(state) {
 const analyticsSlice = createSlice({
     name: 'analytics',
     initialState: {},
-    reducers: {},
-    extraReducers: (builder) =>
-        builder.addCase(setAnalytics.fulfilled, (_, action) => action.payload),
+    reducers: {
+        setAnalytics: (_, action) => action.payload,
+    },
 });
+
+export const { setAnalytics } = analyticsSlice.actions;
 
 export default analyticsSlice.reducer;
