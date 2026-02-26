@@ -14,7 +14,7 @@ const store = configureStore({
     },
 });
 
-const data=await getData();
+// const data=await getData();
 // store.dispatch(setUsers(data.users));
 // store.dispatch(setAnalytics(data.analytics));
 
