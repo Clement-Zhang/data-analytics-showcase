@@ -14,9 +14,9 @@ const store = configureStore({
     },
 });
 
-// const data=await getData();
-// store.dispatch(setUsers(data.users));
-// store.dispatch(setAnalytics(data.analytics));
+const data=await getData();
+store.dispatch(setUsers(data.users));
+store.dispatch(setAnalytics(data.analytics));
 
 export default function DataProvider({ children }) {
     return <Provider store={store}>{children}</Provider>;
