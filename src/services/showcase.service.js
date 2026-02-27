@@ -15,20 +15,6 @@ export async function getData() {
     return await res.json();
 }
 
-export async function getUsers() {
-    const res = await fetch(route('/get'), {
-        method: 'GET',
-    });
-    return await res.json();
-}
-
-export async function getSummary() {
-    const res = await fetch(route('/summarize'), {
-        method: 'GET',
-    });
-    return await res.json();
-}
-
 export async function editUser(user) {
     await fetch(route('/edit'), {
         method: 'POST',
