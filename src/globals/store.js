@@ -17,6 +17,7 @@ const store = configureStore({
 const load = (data) => {
     store.dispatch(setUsers(data.users));
     store.dispatch(setAnalytics(data.analytics));
+    console.log('Data loaded');
 };
 
 const data = await getData();
