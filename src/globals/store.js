@@ -20,11 +20,12 @@ const load = (data) => {
     console.log('Data loaded');
 };
 
-const data = await getData();
-load(data);
-
 export default function DataProvider({ children }) {
     useEffect(() => {
+        (async () => {
+            const data = await getData();
+            load(data);
+        })();
         addListener('update', load);
         return () => {
             removeListener('update', load);
